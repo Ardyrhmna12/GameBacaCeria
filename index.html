@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BACA CERIA - Petualangan Membaca</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
+
+        :root {
+            --bg-sky: #E0F4FF; /* Biru langit pastel */
+            --panel-bg: #FFFFFF;
+            --text-dark: #2B2D42;
+            --primary: #FF9F1C; /* Oranye ceria */
+            --primary-shadow: #CC7A00;
+            --secondary: #2EC4B6; /* Tosca */
+            --secondary-shadow: #1D9A8E;
+            --danger: #FF3366;
+            --danger-shadow: #CC0033;
+            --success: #8AC926;
+            --success-shadow: #689E18;
+            --blue: #3A86FF;
+            --blue-shadow: #225DD4;
+            --yellow: #FFD166;
+            --border-radius: 28px;
+            --font-main: 'Nunito', 'Comic Sans MS', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-sky);
+            color: var(--text-dark);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bg-ornaments {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: float 20s infinite linear;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .cloud1 { width: 120px; height: 40px; top: 10%; left: -150px; animation-duration: 25s; }
+        .cloud1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+        .cloud1::after { width: 70px; height: 70px; top: -35px; right: 15px; }
+
+        .cloud2 { width: 160px; height: 50px; top: 30%; right: -200px; animation-duration: 35s; animation-direction: reverse; opacity: 0.6; transform: scale(0.8); }
+        .cloud2::before { width: 60px; height: 60px; top: -30px; left: 25px; }
+        .cloud2::after { width: 90px; height: 90px; top: -45px; right: 20px; }
+
+        .sun {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: var(--yellow);
+            border-radius: 50%;
+            opacity: 0.9;
+            box-shadow: 0 0 40px var(--yellow);
+            animation: pulseSun 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-10vw); }
+            100% { transform: translateX(110vw); }
+        }
+        @keyframes pulseSun {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        #app-container {
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset 0 -6px 0 rgba(0,0,0,0.05);
+            border: 6px solid var(--primary);
+            text-align: center;
+            max-width: 800px;
+            width: 95%;
+            position: relative;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            color: var(--primary);
+            text-shadow: 4px 4px 0px var(--primary-shadow);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            -webkit-text-stroke: 2px white;
+        }
+        
+        h2 {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            color: var(--secondary);
+            margin-bottom: 25px;
+            font-weight: 900;
+        }
+
+        p {
+            font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .btn {
+            font-family: var(--font-main);
+            font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+            font-weight: 900;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 15px 35px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            position: relative;
+            top: 0;
+            min-height: 80px;
+            min-width: 200px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+        }
+
+        .btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0px 0px transparent !important;
+        }
+
+        .btn-primary { background-color: var(--primary); box-shadow: 0 8px 0px var(--primary-shadow); border: 3px solid #FFF;}
+        .btn-secondary { background-color: var(--secondary); box-shadow: 0 8px 0px var(--secondary-shadow); border: 3px solid #FFF;}
+        .btn-danger { background-color: var(--danger); box-shadow: 0 8px 0px var(--danger-shadow); border: 3px solid #FFF;}
+        .btn-success { background-color: var(--success); box-shadow: 0 8px 0px var(--success-shadow); border: 3px solid #FFF;}
+        .btn-blue { background-color: var(--blue); box-shadow: 0 8px 0px var(--blue-shadow); border: 3px solid #FFF;}
+
+        .btn:disabled {
+            background-color: #ccc;
+            box-shadow: 0 8px 0px #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .game-header {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: var(--panel-bg);
+            border-radius: 24px;
+            border: 4px solid var(--secondary);
+            margin-bottom: 10px;
+            box-shadow: 0 8px 0px rgba(46, 196, 182, 0.2);
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 15px;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-weight: 900;
+            color: var(--secondary-shadow);
+        }
+
+        /* Mascot & Question Area */
+        .mascot-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .mascot {
+            width: 150px;
+            height: 150px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .mascot svg { width: 100%; height: 100%; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1)); }
+        
+        /* Mascot Animations */
+        .mascot .mouth { transform-origin: center; transition: transform 0.1s; }
+        .mascot.talking .mouth { animation: talk 0.2s infinite alternate; }
+        .mascot.happy { animation: jumpHappy 0.6s ease-in-out; }
+        .mascot.happy .mouth { d: path("M 40 60 Q 50 75 60 60"); stroke-width: 4; fill: none; stroke: #FF3366; } /* Smile */
+        .mascot.sad .mouth { d: path("M 40 65 Q 50 55 60 65"); stroke-width: 4; fill: none; stroke: #2B2D42; } /* Frown */
+        .mascot.sad .eye-left, .mascot.sad .eye-right { transform: translateY(5px); }
+
+        @keyframes talk {
+            0% { transform: scaleY(1); }
+            100% { transform: scaleY(2.5); }
+        }
+        @keyframes jumpHappy {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        /* Sound Waves Area */
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255,255,255,0.8);
+            padding: 10px 25px;
+            border-radius: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: -10px;
+            z-index: 10;
+        }
+
+        .speaker-btn {
+            font-size: 3.5rem;
+            background: var(--blue);
+            color: white;
+            border: 4px solid white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 0px var(--blue-shadow);
+        }
+        .speaker-btn:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--blue-shadow); }
+
+        .sound-waves { display: flex; gap: 6px; height: 40px; align-items: center; }
+        .wave-bar {
+            width: 8px; height: 10px;
+            background-color: var(--blue);
+            border-radius: 10px;
+            transition: height 0.1s;
+        }
+        .audio-controls.active .wave-bar { animation: waveAnim 0.5s infinite alternate ease-in-out; }
+        .audio-controls.active .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .audio-controls.active .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .audio-controls.active .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes waveAnim {
+            0% { height: 10px; }
+            100% { height: 35px; }
+        }
+
+        .question-instruction {
+            font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+            font-weight: 900;
+            color: var(--text-dark);
+            background: white;
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 4px dashed var(--primary);
+            text-align: center;
+            margin: 15px 0;
+            max-width: 900px;
+        }
+
+        .choices-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 10px;
+        }
+
+        .choice-card {
+            flex: 1 1 200px;
+            max-width: 350px;
+            background-color: var(--panel-bg);
+            border: 5px solid var(--blue);
+            border-radius: 24px;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 900;
+            padding: 25px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 0px var(--blue-shadow);
+            color: var(--text-dark);
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            word-break: break-word;
+        }
+
+        .choice-card:active {
+            transform: translateY(8px);
+            box-shadow: 0 2px 0px var(--blue-shadow);
+        }
+
+        .choice-card.correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success-shadow);
+            box-shadow: 0 10px 0px var(--success-shadow);
+        }
+
+        .choice-card.wrong {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger-shadow);
+            box-shadow: 0 10px 0px var(--danger-shadow);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+        }
+
+        /* Feedback Overlay */
+        #feedback-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(5px);
+        }
+
+        .feedback-icon {
+            font-size: 10rem;
+            margin-bottom: 20px;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
+        }
+
+        .feedback-text {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            -webkit-text-stroke: 2px white;
+        }
+
+        /* Level Selection */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .level-card {
+            background: var(--panel-bg);
+            border: 5px solid #E2E8F0;
+            border-radius: 24px;
+            padding: 25px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 8px 0px #CBD5E1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card h3 {
+            font-size: 1.6rem;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .level-card.unlocked {
+            border-color: var(--primary);
+            box-shadow: 0 8px 0px var(--primary-shadow);
+        }
+        
+        .level-card.unlocked:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0px var(--primary-shadow);
+        }
+
+        .level-card.locked {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #F1F5F9;
+        }
+
+        .stars-container {
+            font-size: 1.8rem;
+            color: var(--yellow);
+            margin-top: 10px;
+            text-shadow: 1px 1px 0px #D9A036;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .icon-btn {
+            font-size: 2rem;
+            background: white;
+            border: 4px solid var(--secondary);
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 6px 0px var(--secondary-shadow);
+            transition: transform 0.1s;
+        }
+        .icon-btn:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--secondary-shadow); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        @media (orientation: portrait) {
+            .choices-grid { flex-direction: column; align-items: stretch; }
+            .choice-card { max-width: 100%; min-height: 90px; }
+            h1 { font-size: 3rem; }
+            .mascot { width: 120px; height: 120px; }
+            .question-instruction { font-size: 1.2rem; }
+            .game-header { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-ornaments">
+        <div class="sun"></div>
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+    </div>
+
+    <div id="app-container">
+        
+        <!-- Global Controls -->
+        <div class="top-bar" id="global-controls">
+            <button class="icon-btn" id="btn-toggle-audio" onclick="toggleAudio()" title="Suara">🔊</button>
+            <button class="icon-btn" id="btn-home" onclick="showScreen('home-screen')" title="Ke Menu Utama">🏠</button>
+        </div>
+
+        <!-- HOME SCREEN -->
+        <div id="home-screen" class="screen active">
+            <div class="panel">
+                <div style="font-size: 6rem; margin-bottom: -15px; animation: bounceIn 1s ease;">🦉📚✨</div>
+                <h1>BACA CERIA</h1>
+                <h2>Petualangan Membaca</h2>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 30px;">
+                    <button class="btn btn-primary" style="width: 85%; max-width: 400px; font-size: 2rem;" onclick="showScreen('level-select-screen')">▶ MULAI BERMAIN</button>
+                    <div style="display: flex; gap: 15px; width: 85%; max-width: 400px; justify-content: center;">
+                        <button class="btn btn-secondary" style="flex:1;" onclick="showScreen('guide-screen')">📖 PANDUAN</button>
+                        <button class="btn btn-danger" style="flex:1;" onclick="resetProgress()">🗑️ RESET</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL SELECTION SCREEN -->
+        <div id="level-select-screen" class="screen">
+            <div class="panel" style="max-width: 1000px;">
+                <h1>PILIH LEVEL</h1>
+                <p>Pilih petualanganmu hari ini, jagoan!</p>
+                <div class="level-grid" id="level-grid">
+                    <!-- Cards akan digenerate oleh JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="game-stats">
+                    <span id="ui-level-name">Level 1</span>
+                    <span>|</span>
+                    <span>Soal: <span id="ui-question-num">1</span>/15</span>
+                </div>
+                <div class="game-stats">
+                    <span id="ui-timer" style="color: var(--danger);">⏱️ 00:00</span>
+                    <span id="ui-score" style="color: var(--primary);">⭐ Skor: 0</span>
+                </div>
+            </div>
+
+            <div class="mascot-area">
+                <!-- SVG Maskot Burung Hantu Lucu -->
+                <div class="mascot" id="mascot-container">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Sayap/Lengan -->
+                        <path d="M 20 60 Q 5 70 15 90 Q 30 80 25 60" fill="#FF9F1C"/>
+                        <path d="M 80 60 Q 95 70 85 90 Q 70 80 75 60" fill="#FF9F1C"/>
+                        <!-- Badan -->
+                        <rect x="20" y="30" width="60" height="60" rx="30" fill="#FFB703"/>
+                        <!-- Mata Putih -->
+                        <circle cx="35" cy="45" r="12" fill="white"/>
+                        <circle cx="65" cy="45" r="12" fill="white"/>
+                        <!-- Pupil -->
+                        <circle class="eye-left" cx="35" cy="45" r="5" fill="#2B2D42"/>
+                        <circle class="eye-right" cx="65" cy="45" r="5" fill="#2B2D42"/>
+                        <!-- Paruh/Mulut (Animasi) -->
+                        <path class="mouth" d="M 45 55 L 55 55 L 50 65 Z" fill="#FF3366"/>
+                    </svg>
+                </div>
+                
+                <div class="audio-controls" id="audio-controls">
+                    <button class="speaker-btn" onclick="replayAudio()" title="Dengarkan Ulang">🔊</button>
+                    <div class="sound-waves">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+
+                <div class="question-instruction" id="question-display">Dengarkan baik-baik, lalu pilih kata yang kamu dengar!</div>
+            </div>
+
+            <div class="choices-grid" id="choices-container">
+                <!-- Pilihan akan digenerate oleh JS -->
+            </div>
+
+            <!-- Feedback Overlay -->
+            <div id="feedback-overlay">
+                <div class="feedback-icon" id="feedback-icon">⭐</div>
+                <div class="feedback-text" id="feedback-text" style="color: var(--success);">HEBAT!</div>
+                <button class="btn btn-primary" id="btn-next-question" onclick="nextQuestion()">LANJUT ➡️</button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="screen">
+            <div class="panel">
+                <h1 id="result-title">LUAR BIASA!</h1>
+                <div class="stars-container" id="result-stars" style="font-size: 5rem; margin: 20px 0;">⭐⭐⭐</div>
+                <p id="result-message" style="font-size: 2rem; font-weight: bold; color: var(--secondary);">Kamu menjawab 15 dari 15 soal dengan benar!</p>
+                <p id="result-score" style="font-size: 1.8rem; font-weight: 900; color: var(--primary);">Skor Total: 1500</p>
+                <div style="margin-top: 35px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;">
+                    <button class="btn btn-secondary" onclick="showScreen('level-select-screen')">🗺️ PILIH LEVEL</button>
+                    <button class="btn btn-primary" onclick="restartCurrentLevel()">🔄 ULANGI</button>
+                    <button class="btn btn-success" id="btn-next-level" onclick="startNextLevel()" style="display:none;">➡️ LEVEL BERIKUTNYA</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GUIDE SCREEN -->
+        <div id="guide-screen" class="screen">
+            <div class="panel" style="text-align: left;">
+                <h1 style="text-align: center;">PANDUAN BERMAIN</h1>
+                <div style="font-size: 1.3rem; line-height: 1.6; color: #444;">
+                    <p><strong>Selamat datang di BACA CERIA!</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px; margin-bottom: 20px;">
+                        <li>Pastikan volume suara tablet/HP menyala.</li>
+                        <li>Dengarkan kata yang diucapkan. Tekan tombol 🔊 untuk mengulang suara.</li>
+                        <li>Pilih kotak jawaban yang sesuai dengan suara atau instruksi.</li>
+                        <li>Kumpulkan bintang di setiap level untuk membuka level berikutnya!</li>
+                    </ul>
+                    <p><strong>Level 1:</strong> Mengenal kata sederhana.</p>
+                    <p><strong>Level 2:</strong> Menyusun suku kata.</p>
+                    <p><strong>Level 3:</strong> <em>Mendengarkan murni!</em> Temukan kata berimbuhan tanpa bantuan teks soal.</p>
+                    <p><strong>Level 4:</strong> Membaca kalimat sederhana.</p>
+                    <p><strong>Level 5:</strong> Tantangan campuran dengan batas waktu!</p>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="showScreen('home-screen')">⬅️ KEMBALI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- QUESTION DATABASE --- */
+        const levelData = [
+            {
+                id: 1,
+                title: "Level 1: Kenal Kata",
+                desc: "Mengenali kata sederhana sehari-hari.",
+                words: ["nanas", "kuda", "sawi", "bola", "buku", "meja", "topi", "sapi", "roti", "mata", "kaki", "susu", "nasi", "ikan", "apel", "baju", "gigi", "jari", "pintu", "jendela"],
+                type: "word"
+            },
+            {
+                id: 2,
+                title: "Level 2: Rangkai Suku Kata",
+                desc: "Membaca dan merangkai suku kata.",
+                words: [
+                    { q: "ba + ju =", a: "baju" }, { q: "bo + la =", a: "bola" },
+                    { q: "bu + ku =", a: "buku" }, { q: "sa + pi =", a: "sapi" },
+                    { q: "na + nas =", a: "nanas" }, { q: "se + pa + tu =", a: "sepatu" },
+                    { q: "ma + ta =", a: "mata" }, { q: "ka + ki =", a: "kaki" },
+                    { q: "ro + ti =", a: "roti" }, { q: "sa + wi =", a: "sawi" },
+                    { q: "to + pi =", a: "topi" }, { q: "me + ja =", a: "meja" },
+                    { q: "ku + da =", a: "kuda" }, { q: "i + kan =", a: "ikan" },
+                    { q: "a + pel =", a: "apel" }, { q: "ke + re + ta =", a: "kereta" }
+                ],
+                type: "syllable"
+            },
+            {
+                // PERUBAHAN LEVEL 3: DENGARKAN DAN PILIH (Tanpa teks bocoran)
+                id: 3,
+                title: "Level 3: Petualangan Imbuhan",
+                desc: "Dengarkan baik-baik, temukan kata yang tepat!",
+                words: ["menyapu", "membaca", "menulis", "menggambar", "menghitung", "memasak", "mengambil", "mengirim", "mengecat", "melukis"],
+                type: "listen"
+            },
+            {
+                id: 4,
+                title: "Level 4: Baca Kalimat",
+                desc: "Membaca kalimat pendek.",
+                words: [
+                    "Adik membaca buku.", "Ibu menyapu lantai.", "Budi menulis surat.",
+                    "Siti menggambar bunga.", "Ayah memasak nasi.", "Kakak menghitung bola.",
+                    "Saya suka makan apel.", "Dia sedang minum susu.", "Kucing itu makan ikan.",
+                    "Kuda berlari sangat cepat.", "Sapi makan rumput hijau.", "Bola itu warna merah.",
+                    "Baju baru sangat bersih.", "Topi adik warna biru.", "Meja kayu ini kuat."
+                ],
+                type: "sentence"
+            },
+            {
+                id: 5,
+                title: "Level 5: Tantangan Membaca",
+                desc: "Uji kecepatanmu dari level 1 hingga 4!",
+                words: [], 
+                type: "mixed"
+            }
+        ];
+
+        /* --- STATE MANAGEMENT & STORAGE --- */
+        let gameState = {
+            audioEnabled: true,
+            currentLevel: 1,
+            questions: [],
+            currentQIndex: 0,
+            score: 0,
+            correctCount: 0,
+            timer: 0,
+            interval: null,
+            isAnswering: false
+        };
+
+        let progress = {
+            unlockedLevel: 1,
+            stars: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+        };
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('bacaCeriaProgressV2');
+                if (saved) {
+                    progress = JSON.parse(saved);
+                }
+            } catch (e) { console.error("Gagal memuat progres:", e); }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('bacaCeriaProgressV2', JSON.stringify(progress));
+            } catch (e) { console.error("Gagal menyimpan progres:", e); }
+        }
+
+        function resetProgress() {
+            if (confirm("Apakah kamu yakin ingin menghapus semua progres dan mengulang dari awal?")) {
+                progress = { unlockedLevel: 1, stars: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } };
+                saveProgress();
+                alert("Progres berhasil direset!");
+                showScreen('home-screen');
+            }
+        }
+
+        /* --- AUDIO UTILITIES (Web Speech API) --- */
+        const synth = window.speechSynthesis;
+        let globalUtterance = null; // Mencegah garbage collection yang memotong event onend
+        
+        function toggleAudio() {
+            gameState.audioEnabled = !gameState.audioEnabled;
+            document.getElementById('btn-toggle-audio').innerText = gameState.audioEnabled ? "🔊" : "🔇";
+            if (!gameState.audioEnabled && synth) synth.cancel();
+        }
+
+        function playTTS(text) {
+            if (!gameState.audioEnabled || !synth) return;
+            
+            synth.cancel(); // Pastikan suara sebelumnya berhenti
+            
+            // Bersihkan teks agar natural (menghapus +, =, dll)
+            let cleanText = text.replace(/\+/g, '').replace(/=/g, '').replace(/meN-/g, 'men');
+
+            globalUtterance = new SpeechSynthesisUtterance(cleanText);
+            globalUtterance.lang = 'id-ID';
+            globalUtterance.rate = 0.9; // Kecepatan disesuaikan agar terdengar alami
+            globalUtterance.pitch = 1.7; // NADA DITINGGIKAN (1.7) untuk meniru suara anak kecil yang imut
+            globalUtterance.volume = 1.0;
+            
+            // Cari suara berlabel anak (jika sistem mendukung), atau gunakan suara perempuan default
+            const voices = synth.getVoices();
+            const idVoice = voices.find(v => v.lang === 'id-ID' && (v.name.toLowerCase().includes('child') || v.name.toLowerCase().includes('anak')))
+                            || voices.find(v => v.lang === 'id-ID' && v.name.toLowerCase().includes('perempuan')) 
+                            || voices.find(v => v.lang === 'id-ID');
+            if(idVoice) globalUtterance.voice = idVoice;
+
+            // Animasi Maskot & Gelombang saat berbicara
+            globalUtterance.onstart = () => {
+                document.getElementById('mascot-container').classList.add('talking');
+                document.getElementById('audio-controls').classList.add('active');
+            };
+            
+            globalUtterance.onend = () => {
+                document.getElementById('mascot-container').classList.remove('talking');
+                document.getElementById('audio-controls').classList.remove('active');
+            };
+            
+            globalUtterance.onerror = () => {
+                document.getElementById('mascot-container').classList.remove('talking');
+                document.getElementById('audio-controls').classList.remove('active');
+            };
+
+            synth.speak(globalUtterance);
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function generateChoices(correctAnswer, pool, count = 3) {
+            let choices = [correctAnswer];
+            let safePool = pool.filter(item => item !== correctAnswer);
+            safePool = shuffle(safePool);
+            
+            for(let i=0; i<count-1 && i<safePool.length; i++) {
+                choices.push(safePool[i]);
+            }
+            return shuffle(choices);
+        }
+
+        function prepareQuestions(levelId) {
+            let level = levelData.find(l => l.id === levelId);
+            let questions = [];
+            const qCount = 15;
+
+            if (level.type === 'mixed') {
+                let allData = [];
+                // Kata (Level 1)
+                levelData[0].words.forEach(w => allData.push({ text: "Kata apa ini?", correct: w, choices: generateChoices(w, levelData[0].words, 3), audio: w, type: 'word' }));
+                // Suku kata (Level 2)
+                levelData[1].words.forEach(w => allData.push({ text: w.q, correct: w.a, choices: generateChoices(w.a, levelData[1].words.map(x=>x.a), 3), audio: w.a, type: 'syllable' }));
+                // Imbuhan (Level 3) -> Mekanisme Mendengarkan (Teks disembunyikan)
+                levelData[2].words.forEach(w => {
+                    allData.push({ text: "Dengarkan baik-baik, lalu pilih kata yang kamu dengar!", correct: w, choices: generateChoices(w, levelData[2].words, 3), audio: w, type: 'listen' });
+                });
+                
+                allData = shuffle(allData);
+                questions = allData.slice(0, qCount);
+
+            } else if (level.type === 'word' || level.type === 'sentence') {
+                let pool = shuffle([...level.words]);
+                let selected = pool.slice(0, Math.min(qCount, pool.length));
+                while(selected.length < qCount) selected.push(pool[Math.floor(Math.random() * pool.length)]);
+
+                selected.forEach(w => {
+                    questions.push({
+                        text: level.type === 'word' ? "Kata apa ini?" : "Pilih kalimat yang tepat!", 
+                        correct: w,
+                        choices: generateChoices(w, level.words, level.type === 'sentence' ? 3 : 4),
+                        audio: w,
+                        type: level.type
+                    });
+                });
+            } else if (level.type === 'syllable') {
+                let pool = shuffle([...level.words]);
+                let ansPool = pool.map(x=>x.a);
+                let selected = pool.slice(0, Math.min(qCount, pool.length));
+                while(selected.length < qCount) selected.push(pool[Math.floor(Math.random() * pool.length)]);
+
+                selected.forEach(w => {
+                    questions.push({ text: w.q, correct: w.a, choices: generateChoices(w.a, ansPool, 4), audio: w.a, type: 'syllable' });
+                });
+            } else if (level.type === 'listen') {
+                // LEVEL 3: DENGARKAN MURNI
+                let pool = shuffle([...level.words]);
+                let selected = pool.slice(0, Math.min(qCount, pool.length));
+                while(selected.length < qCount) selected.push(pool[Math.floor(Math.random() * pool.length)]);
+
+                selected.forEach(w => {
+                    questions.push({
+                        text: "Dengarkan baik-baik, lalu pilih kata yang kamu dengar!", // Tidak ada teks kata target
+                        correct: w,
+                        choices: generateChoices(w, pool, 3), // Selalu 3 kartu untuk level ini
+                        audio: w,
+                        type: 'listen'
+                    });
+                });
+            }
+            return questions;
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            if (screenId === 'level-select-screen') renderLevelSelection();
+            if (screenId !== 'game-screen') {
+                stopTimer();
+                if(synth) synth.cancel();
+            }
+            
+            document.getElementById('global-controls').style.display = (screenId === 'game-screen') ? 'none' : 'flex';
+        }
+
+        function renderLevelSelection() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            
+            levelData.forEach(level => {
+                const isUnlocked = level.id <= progress.unlockedLevel;
+                const stars = progress.stars[level.id] || 0;
+                let starsHTML = '';
+                for(let i=0; i<3; i++) starsHTML += (i < stars) ? '⭐' : '☆';
+
+                const card = document.createElement('div');
+                card.className = `level-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+                card.innerHTML = `
+                    <h3>${level.title}</h3>
+                    <p style="font-size: 1rem; margin-top: 5px; color: #666;">${level.desc}</p>
+                    <div class="stars-container">${starsHTML}</div>
+                    ${!isUnlocked ? '<div style="margin-top: 10px; font-weight: bold; color: #999;">🔒 Terkunci</div>' : ''}
+                `;
+                
+                if (isUnlocked) card.onclick = () => initGame(level.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function initGame(levelId) {
+            gameState.currentLevel = levelId;
+            gameState.questions = prepareQuestions(levelId);
+            gameState.currentQIndex = 0;
+            gameState.score = 0;
+            gameState.correctCount = 0;
+            gameState.timer = (levelId === 5) ? 120 : 0; 
+            
+            document.getElementById('ui-level-name').innerText = `Level ${levelId}`;
+            showScreen('game-screen');
+            updateUI();
+            
+            if(levelId === 5) startTimer();
+            else document.getElementById('ui-timer').innerText = "⏱️ Mode Santai";
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            gameState.isAnswering = false;
+            document.getElementById('feedback-overlay').style.display = 'none';
+            
+            // Reset ekspresi maskot
+            const mascot = document.getElementById('mascot-container');
+            mascot.classList.remove('happy', 'sad', 'talking');
+            document.getElementById('audio-controls').classList.remove('active');
+
+            const q = gameState.questions[gameState.currentQIndex];
+            
+            // Atur Instruksi (Tidak ada bocoran teks pada level 3/listen)
+            document.getElementById('question-display').innerText = q.text;
+            
+            const container = document.getElementById('choices-container');
+            container.innerHTML = '';
+            
+            q.choices.forEach(choiceText => {
+                const btn = document.createElement('div');
+                btn.className = 'choice-card';
+                btn.innerText = choiceText;
+                btn.onclick = () => handleAnswer(btn, choiceText, q.correct);
+                container.appendChild(btn);
+            });
+
+            // Putar audio secara otomatis dengan sedikit delay
+            setTimeout(() => { playTTS(q.audio); }, 400);
+        }
+
+        function replayAudio() {
+            if(gameState.isAnswering) return; // Jangan putar jika sedang melihat hasil
+            const q = gameState.questions[gameState.currentQIndex];
+            playTTS(q.audio);
+        }
+
+        function handleAnswer(btnElement, selected, correct) {
+            if (gameState.isAnswering) return;
+            gameState.isAnswering = true;
+            
+            if(synth) synth.cancel(); // Hentikan audio yang sedang bermain
+            
+            const isCorrect = (selected === correct);
+            const overlay = document.getElementById('feedback-overlay');
+            const icon = document.getElementById('feedback-icon');
+            const text = document.getElementById('feedback-text');
+            const mascot = document.getElementById('mascot-container');
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                mascot.classList.add('happy');
+                
+                let messages = ["HEBAT!", "PINTAR!", "BAGUS SEKALI!", "LUAR BIASA!"];
+                text.innerText = messages[Math.floor(Math.random() * messages.length)];
+                text.style.color = "var(--success)";
+                icon.innerText = "⭐";
+                playTTS(text.innerText);
+
+                gameState.score += 10;
+                gameState.correctCount++;
+                
+                setTimeout(() => { overlay.style.display = 'flex'; }, 600);
+
+            } else {
+                btnElement.classList.add('wrong');
+                mascot.classList.add('sad');
+                
+                text.innerText = "AYO COBA LAGI!";
+                text.style.color = "var(--danger)";
+                icon.innerText = "💪";
+                playTTS(text.innerText);
+                
+                setTimeout(() => {
+                    btnElement.classList.remove('wrong');
+                    mascot.classList.remove('sad');
+                    gameState.isAnswering = false; 
+                }, 1500);
+            }
+            updateUI();
+        }
+
+        function nextQuestion() {
+            gameState.currentQIndex++;
+            if (gameState.currentQIndex < gameState.questions.length) {
+                renderQuestion();
+                updateUI();
+            } else {
+                endGame();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('ui-question-num').innerText = gameState.currentQIndex + 1;
+            document.getElementById('ui-score').innerText = `⭐ Skor: ${gameState.score}`;
+        }
+
+        function startTimer() {
+            clearInterval(gameState.interval);
+            updateTimerDisplay();
+            gameState.interval = setInterval(() => {
+                gameState.timer--;
+                updateTimerDisplay();
+                if (gameState.timer <= 0) endGame(true);
+            }, 1000);
+        }
+
+        function stopTimer() { clearInterval(gameState.interval); }
+
+        function updateTimerDisplay() {
+            if(gameState.currentLevel !== 5) return;
+            const m = Math.floor(gameState.timer / 60).toString().padStart(2, '0');
+            const s = (gameState.timer % 60).toString().padStart(2, '0');
+            document.getElementById('ui-timer').innerText = `⏱️ ${m}:${s}`;
+        }
+
+        function endGame(isTimeOut = false) {
+            stopTimer();
+            if(synth) synth.cancel();
+            
+            const totalQ = gameState.questions.length;
+            const correct = gameState.correctCount;
+            const accuracy = correct / totalQ;
+            
+            let starsEarned = 0;
+            if (accuracy >= 0.9) starsEarned = 3;
+            else if (accuracy >= 0.6) starsEarned = 2;
+            else if (accuracy >= 0.3) starsEarned = 1;
+
+            if (starsEarned > (progress.stars[gameState.currentLevel] || 0)) {
+                progress.stars[gameState.currentLevel] = starsEarned;
+            }
+            
+            if (accuracy >= 0.5 && gameState.currentLevel < 5 && progress.unlockedLevel === gameState.currentLevel) {
+                progress.unlockedLevel = gameState.currentLevel + 1;
+            }
+            
+            saveProgress();
+
+            let titleStr = "LUAR BIASA!";
+            if (isTimeOut) titleStr = "WAKTU HABIS!";
+            else if (starsEarned === 0) titleStr = "JANGAN MENYERAH!";
+
+            document.getElementById('result-title').innerText = titleStr;
+            
+            let starsHTML = '';
+            for(let i=0; i<3; i++) starsHTML += (i < starsEarned) ? '⭐' : '☆';
+            document.getElementById('result-stars').innerHTML = starsHTML;
+
+            document.getElementById('result-message').innerText = `Kamu menjawab ${correct} dari ${totalQ} soal dengan benar!`;
+            document.getElementById('result-score').innerText = `Skor Total: ${gameState.score}`;
+
+            const btnNext = document.getElementById('btn-next-level');
+            if (accuracy >= 0.5 && gameState.currentLevel < 5) btnNext.style.display = 'inline-block';
+            else btnNext.style.display = 'none';
+
+            if(starsEarned >= 2) playTTS("Luar biasa! Kamu berhasil menyelesaikannya.");
+            else playTTS("Bagus! Terus berlatih ya.");
+
+            showScreen('result-screen');
+        }
+
+        function restartCurrentLevel() { initGame(gameState.currentLevel); }
+        function startNextLevel() { if (gameState.currentLevel < 5) initGame(gameState.currentLevel + 1); }
+
+        window.onload = () => {
+            loadProgress();
+            
+            // Bypass user interaction strictness for Web Speech API in some browsers
+            document.body.addEventListener('click', function unlockAudio() {
+                if(synth) {
+                    let u = new SpeechSynthesisUtterance('');
+                    synth.speak(u);
+                }
+                document.body.removeEventListener('click', unlockAudio);
+            }, { once: true });
+        };
+    </script>
+</body>
+</html>
